@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bigquery-controller
+  labels:
+    name: bigquery-controller
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: bigquery-controller
+  template:
+    metadata:
+      labels:
+        name: bigquery-controller
+    spec:
+      containers:
+      - name: bigquery
+        image: gcr.io/google-samples/redis-bq-pipe:v5
+        env:
+        - name: PROCESSINGSCRIPT
+          value: redis-to-bigquery
+        - name: REDISLIST
+          value: twitter-stream
+        # Change this to your project ID.
+        - name: PROJECT_ID
+          value: projects/egenproject-319900/topics/egenpubsub
+
+        # Change the following two settings to your dataset and table.
+        - name: BQ_DATASET
+          value: egenproject-319900:twitter
+        - name: BQ_TABLE
+          value: egenproject-319900:twitter.tweets
